@@ -1,0 +1,31 @@
+{
+  "name": "quiz-ai-app",
+  "version": "1.0.0",
+  "description": "AI Quiz Consensus App - Get answers from ChatGPT, Claude & Gemini",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js"
+  },
+  "keywords": [
+    "quiz",
+    "ai",
+    "chatgpt",
+    "claude",
+    "gemini",
+    "consensus"
+  ],
+  "author": "Ajay Karhade",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.96.0",
+    "@google/generative-ai": "^0.24.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "multer": "^2.1.1",
+    "openai": "^6.38.0",
+    "sharp": "^0.34.5"
+  }
+}
