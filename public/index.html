@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="AI Quiz Consensus - Get answers from ChatGPT, Claude & Gemini">
+  <meta name="theme-color" content="#0a0a1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Quiz AI Consensus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+</head>
+<body>
+  <div id="app">
+    <header class="app-header">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">🧠</div>
+          <div class="logo-text"><h1>Quiz AI</h1><span class="logo-subtitle">Consensus Engine</span></div>
+        </div>
+        <div id="api-status" class="api-status"><span class="status-dot"></span><span class="status-text">Checking...</span></div>
+      </div>
+    </header>
+    <main class="main-content">
+      <section id="quiz-view" class="view active">
+        <div class="card image-upload-card">
+          <div class="card-header"><span class="card-icon">📸</span><span>Screenshot to Question</span></div>
+          <div class="upload-zone" id="upload-zone">
+            <input type="file" id="image-input" accept="image/*" capture="environment" hidden>
+            <div class="upload-placeholder" id="upload-placeholder"><div class="upload-icon">📷</div><p>Tap to upload or take a screenshot</p><p class="upload-hint">Supports PNG, JPG, WEBP</p></div>
+            <div class="upload-preview" id="upload-preview" style="display:none"><img id="preview-img" alt="Preview"><button id="remove-image" class="btn-icon" title="Remove">✕</button></div>
+          </div>
+          <button id="extract-btn" class="btn btn-secondary" style="display:none"><span class="btn-icon-left">🔍</span>Extract Question</button>
+          <div id="extract-status" class="extract-status" style="display:none"></div>
+        </div>
+        <div class="card question-card">
+          <div class="card-header"><span class="card-icon">❓</span><span>Your Question</span></div>
+          <textarea id="question-input" placeholder="Type or paste your quiz question here..." rows="3"></textarea>
+          <div class="mcq-toggle"><label class="toggle-switch" id="mcq-toggle-label"><input type="checkbox" id="mcq-toggle"><span class="toggle-slider"></span><span class="toggle-text">MCQ Mode</span></label></div>
+          <div id="mcq-options" class="mcq-options" style="display:none">
+            <div class="option-row"><label class="option-label option-a">A</label><input type="text" id="option-a" placeholder="Option A" class="option-input"></div>
+            <div class="option-row"><label class="option-label option-b">B</label><input type="text" id="option-b" placeholder="Option B" class="option-input"></div>
+            <div class="option-row"><label class="option-label option-c">C</label><input type="text" id="option-c" placeholder="Option C" class="option-input"></div>
+            <div class="option-row"><label class="option-label option-d">D</label><input type="text" id="option-d" placeholder="Option D" class="option-input"></div>
+          </div>
+          <button id="submit-btn" class="btn btn-primary"><span class="btn-text">🚀 Get AI Consensus</span><span class="btn-loading" style="display:none"><span class="spinner"></span>Asking AIs...</span></button>
+        </div>
+        <div id="results-section" class="results-section" style="display:none">
+          <div id="consensus-card" class="card consensus-card">
+            <div class="consensus-header"><span class="consensus-icon">✅</span><span class="consensus-title">CONSENSUS ANSWER</span></div>
+            <div id="consensus-answer" class="consensus-answer"></div>
+            <div id="confidence-bar" class="confidence-bar"><div class="confidence-fill"></div><span class="confidence-text"></span></div>
+          </div>
+          <div class="ai-answers">
+            <div class="card ai-card" id="chatgpt-card"><div class="ai-card-header"><span class="ai-logo chatgpt-logo">⚡</span><span class="ai-name">ChatGPT</span><span class="ai-badge" id="chatgpt-badge"></span></div><div class="ai-answer" id="chatgpt-answer"></div></div>
+            <div class="card ai-card" id="claude-card"><div class="ai-card-header"><span class="ai-logo claude-logo">🟠</span><span class="ai-name">Claude</span><span class="ai-badge" id="claude-badge"></span></div><div class="ai-answer" id="claude-answer"></div></div>
+            <div class="card ai-card" id="gemini-card"><div class="ai-card-header"><span class="ai-logo gemini-logo">💎</span><span class="ai-name">Gemini</span><span class="ai-badge" id="gemini-badge"></span></div><div class="ai-answer" id="gemini-answer"></div></div>
+          </div>
+        </div>
+      </section>
+      <section id="history-view" class="view">
+        <div class="history-header"><h2>📜 Answer History</h2><button id="clear-history-btn" class="btn btn-danger btn-sm">🗑️ Clear All</button></div>
+        <div id="history-list" class="history-list"><div class="empty-state"><div class="empty-icon">📝</div><p>No history yet</p><p class="empty-hint">Submit a quiz question to get started!</p></div></div>
+      </section>
+      <section id="settings-view" class="view">
+        <h2 class="settings-title">⚙️ API Configuration</h2>
+        <p class="settings-desc">Add your API keys to the .env file. At least one key is required.</p>
+        <div class="card settings-card">
+          <div class="setting-item"><div class="setting-header"><span class="ai-logo chatgpt-logo">⚡</span><div><span class="setting-name">OpenAI (ChatGPT)</span><br><span class="setting-hint">Get key at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a></span></div><span class="setting-status" id="openai-status">●</span></div></div>
+          <div class="setting-item"><div class="setting-header"><span class="ai-logo claude-logo">🟠</span><div><span class="setting-name">Anthropic (Claude)</span><br><span class="setting-hint">Get key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></span></div><span class="setting-status" id="anthropic-status">●</span></div></div>
+          <div class="setting-item"><div class="setting-header"><span class="ai-logo gemini-logo">💎</span><div><span class="setting-name">Google (Gemini)</span><br><span class="setting-hint">Free key at <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com</a></span></div><span class="setting-status" id="gemini-status">●</span></div></div>
+        </div>
+        <div class="card info-card"><h3>ℹ️ How to add API keys</h3><p>Edit the <code>.env</code> file in the project root:</p><pre><code>OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GEMINI_API_KEY=AI...</code></pre><p>Then restart the server.</p></div>
+      </section>
+    </main>
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-view="quiz-view" id="nav-quiz"><span class="nav-icon">📝</span><span class="nav-label">Quiz</span></button>
+      <button class="nav-item" data-view="history-view" id="nav-history"><span class="nav-icon">📜</span><span class="nav-label">History</span><span class="nav-badge" id="history-badge" style="display:none">0</span></button>
+      <button class="nav-item" data-view="settings-view" id="nav-settings"><span class="nav-icon">⚙️</span><span class="nav-label">Settings</span></button>
+    </nav>
+  </div>
+  <div id="toast-container" class="toast-container"></div>
+  <script src="/js/app.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/history.js"></script>
+  <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{})}</script>
+</body>
+</html>
